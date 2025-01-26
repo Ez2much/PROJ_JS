@@ -1,4 +1,31 @@
 const Product = require('../models/product');
+const multer = require('multer');
+const path = require('path');
+
+const storage = multer.diskStorage({
+    destination: (req, file, cb) => {
+        cb(null, 'uploads/');  // Save images to the "uploads" folder
+    },
+    filename: (req, file, cb) => {
+        cb(null, Date.now() + path.extname(file.originalname));  // Use the current timestamp as filename to avoid duplicates
+    }
+});
+
+const upload = multer({
+    storage: storage,
+    limits: { fileSize: 5 * 1024 * 1024 },  // Limit to 5MB
+    fileFilter: (req, file, cb) => {
+        const allowedTypes = /jpeg|jpg|png/;
+        const extname = allowedTypes.test(path.extname(file.originalname).toLowerCase());
+        const mimetype = allowedTypes.test(file.mimetype);
+
+        if (extname && mimetype) {
+            return cb(null, true);
+        } else {
+            return cb(new Error('Only images (jpeg, jpg, png) are allowed'));
+        }
+    }
+}).single('image');
 
 // Pobieranie wszystkich produktów
 exports.getProducts = async (req, res) => {
@@ -11,21 +38,32 @@ exports.getProducts = async (req, res) => {
 };
 
 // Dodawanie nowego produktu
-exports.addProduct = async (req, res) => {
-    const { name, price, description, quantity } = req.body;
+exports.addProduct = (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ message: 'Error uploading image', error: err.message });
+        }
 
-    try {
-        const newProduct = await Product.create({
-            name,
-            price,
-            description,
-            quantity,
-        });
+        const { name, price, description, quantity } = req.body;
+        const image = req.file ? req.file.path : null;  // Save image path if image is uploaded
 
-        return res.status(201).json({ message: 'Product added successfully', product: newProduct });
-    } catch (err) {
-        return res.status(500).json({ message: 'Server error', error: err.message });
-    }
+        try {
+            const newProduct = await Product.create({
+                name,
+                price,
+                description,
+                quantity,
+                image,  // Save image path in the database
+            });
+
+            return res.status(201).json({
+                message: 'Product added successfully',
+                product: newProduct,
+            });
+        } catch (err) {
+            return res.status(500).json({ message: 'Server error', error: err.message });
+        }
+    });
 };
 
 // Aktualizowanie produktu

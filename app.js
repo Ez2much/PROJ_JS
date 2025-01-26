@@ -13,10 +13,14 @@ const koszykController = require('./backend/controllers/cartController');
 const app = express();
 const port = 5000;
 
+
+
 // Middleware
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cors()); // Obs³uga CORS
+
+app.use('/uploads', express.static(path.join(__dirname, 'uploads')));
 
 // Udostêpnienie frontendu
 app.use(express.static(path.join(__dirname, 'frontend')));
@@ -36,6 +40,8 @@ app.get('/api/products', produktController.getProducts);
 app.post('/api/cart', koszykController.addProductToCart);
 app.delete('/api/cart', koszykController.removeProductFromCart);
 app.get('/api/cart/:userId', koszykController.getCart);
+
+app.post('/api/products', produktController.addProduct);
 
 // Middleware obs³uguj¹cy b³êdy
 app.use((err, req, res, next) => {

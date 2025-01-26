@@ -1,4 +1,4 @@
-// models/produkt.js
+// models/product.js
 const { DataTypes } = require('sequelize');
 const sequelize = require('../../db');
 
@@ -16,13 +16,17 @@ const Product = sequelize.define('Product', {
         type: DataTypes.FLOAT,
         allowNull: false,
     },
-    desc: {
+    description: {
         type: DataTypes.STRING,
         allowNull: true,
     },
     quantity: {
         type: DataTypes.INTEGER,
         defaultValue: 1,
+    },
+    image: {
+        type: DataTypes.STRING,
+        allowNull: true,  // Make it nullable in case no image is uploaded
     },
 });
 
