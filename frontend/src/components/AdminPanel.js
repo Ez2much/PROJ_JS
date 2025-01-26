@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
+import { addProduct } from '../services/api'; // Zak³adaj¹c, ¿e masz odpowiedni¹ funkcjê do wysy³ania zapytañ API
 import axios from 'axios';
+import './AdminPanel.css';
 
 const AdminPanel = () => {
     const [name, setName] = useState('');
@@ -8,6 +10,7 @@ const AdminPanel = () => {
     const [quantity, setQuantity] = useState(1);
     const [image, setImage] = useState(null);
     const [message, setMessage] = useState('');
+    const [token, setToken] = useState(''); // Zak³adaj¹c, ¿e masz token autoryzacyjny
 
     const handleImageChange = (e) => {
         const file = e.target.files[0];
@@ -19,22 +22,11 @@ const AdminPanel = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        const formData = new FormData();
-        formData.append('name', name);
-        formData.append('price', price);
-        formData.append('description', description);
-        formData.append('quantity', quantity);
-        if (image) {
-            formData.append('image', image);
-        }
+        const newProduct = { name, price, description, quantity, image };
 
         try {
-            // Send the product details to the backend
-            const response = await axios.post('http://localhost:5000/api/products', formData, {
-                headers: {
-                    'Content-Type': 'multipart/form-data',  // Set the header for multipart form data
-                },
-            });
+            // Wywo³anie funkcji z API do dodania produktu
+            const response = await addProduct(newProduct, token);
             setMessage('Product added successfully');
             // Clear form fields
             setName('');
@@ -49,9 +41,9 @@ const AdminPanel = () => {
     };
 
     return (
-        <div>
+        <div className="admin-panel">
             <h2>Admin Panel - Add New Product</h2>
-            {message && <p>{message}</p>}
+            {message && <p className={message.includes('Error') ? 'error' : ''}>{message}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
                     <label>Product Name</label>
@@ -100,5 +92,4 @@ const AdminPanel = () => {
         </div>
     );
 };
-
 export default AdminPanel;

@@ -55,16 +55,18 @@ exports.login = async (req, res) => {
 
         // Generowanie tokenu JWT
         const token = jwt.sign(
-            { userId: user.id, email: user.email }, // Przechowuj e-mail lub ID w tokenie
+            { userId: user.id, email: user.email, isAdmin: user.isAdmin }, // Dodajemy isAdmin do payload
             'secretKey', // U¿yj swojego sekretu
-            { expiresIn: '1min' } // Czas wygaœniêcia tokenu (1 godzina)
+            { expiresIn: '1h' } // Czas wygaœniêcia tokenu (1 godzina)
         );
 
         return res.status(200).json({
             message: 'Logowanie zakoñczone sukcesem.',
             token,
+            isAdmin: user.isAdmin, // Zwróæ tak¿e flagê isAdmin w odpowiedzi
         });
     } catch (err) {
         return res.status(500).json({ message: 'B³¹d serwera', error: err.message });
     }
 };
+

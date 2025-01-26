@@ -35,7 +35,7 @@ export const loginUser = async (email, password) => {
 // Pobieranie produktów
 export const getProducts = async () => {
     try {
-        const response = await axios.get(`${API_URL}/products`);
+        const response = await axios.get(`${API_URL}/api/products`);
         return response.data; // Zwracamy dane z odpowiedzi
     } catch (error) {
         console.error('Error fetching products', error);
@@ -46,7 +46,7 @@ export const getProducts = async () => {
 // Dodawanie produktu do koszyka
 export const addToCart = async (userId, productId, quantity) => {
     try {
-        const response = await axios.post(`${API_URL}/cart`, { userId, productId, quantity });
+        const response = await axios.post(`${API_URL}/api/cart`, { userId, productId, quantity });
         return response.data; // Zwracamy dane z odpowiedzi
     } catch (error) {
         console.error('Error adding product to cart', error);
@@ -57,10 +57,97 @@ export const addToCart = async (userId, productId, quantity) => {
 // Pobieranie koszyka
 export const getCart = async (userId) => {
     try {
-        const response = await axios.get(`${API_URL}/cart/${userId}`);
+        const response = await axios.get(`${API_URL}/api/cart/${userId}`);
         return response.data; // Zwracamy dane z odpowiedzi
     } catch (error) {
         console.error('Error fetching cart', error);
         throw error.response?.data?.message || 'Error fetching cart';
     }
 };
+
+
+export const deleteProduct = async (productId, token) => {
+    try {
+        const response = await axios.delete(`${API_URL}/api/products/${productId}`, {
+            headers: {
+                Authorization: `Bearer ${token}` // Token w nag³ówkach (jeœli wymagana autoryzacja)
+            }
+        });
+        return response.data; // Zwraca odpowiedŸ z backendu
+    } catch (error) {
+        console.error('Error deleting product:', error);
+        throw error.response?.data?.message || 'Error deleting product';
+    }
+};
+
+export const addProduct = async (newProduct, token) => {
+    const formData = new FormData();
+    formData.append('name', newProduct.name);
+    formData.append('description', newProduct.description);
+    formData.append('price', newProduct.price);
+    formData.append('quantity', newProduct.quantity);
+    if (newProduct.image) {
+        formData.append('image', newProduct.image);
+    }
+
+    try {
+        const response = await axios.post(`${API_URL}/api/products`, formData, {
+            headers: {
+                'Authorization': `Bearer ${token}`,
+                'Content-Type': 'multipart/form-data'
+            }
+        });
+        return response.data; // Zwróæ dane nowo dodanego produktu
+    } catch (error) {
+        console.error('Error adding product', error);
+        throw error.response?.data?.message || 'Error adding product';
+    }
+};
+
+/*export const updateProduct = async (product, token) => {
+    const response = await fetch(`http://localhost:5000/api/products/${product.id}`, {
+        method: 'PUT',
+        headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(product),
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to update product');
+    }
+
+    return await response.json();
+};*/
+
+export const updateProduct = async (product, token, newImage) => {
+    const formData = new FormData();
+
+    // Append product fields to FormData
+    formData.append('name', product.name);
+    formData.append('price', product.price);
+    formData.append('description', product.description);
+    formData.append('quantity', product.quantity);
+
+    // If a new image is selected, append it to FormData
+    if (newImage) {
+        formData.append('image', newImage);
+    }
+
+    // Send the form data with the updated product information
+    const response = await fetch(`http://localhost:5000/api/products/${product.id}`, {
+        method: 'PUT',
+        headers: {
+            Authorization: `Bearer ${token}`, // Include authorization token
+        },
+        body: formData, // Send the form data, not JSON
+    });
+
+    if (!response.ok) {
+        throw new Error('Failed to update product');
+    }
+
+    return await response.json(); // Return the updated product data
+};
+

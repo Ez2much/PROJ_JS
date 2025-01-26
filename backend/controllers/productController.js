@@ -1,6 +1,7 @@
 const Product = require('../models/product');
 const multer = require('multer');
 const path = require('path');
+const fs = require('fs');
 
 const storage = multer.diskStorage({
     destination: (req, file, cb) => {
@@ -67,31 +68,47 @@ exports.addProduct = (req, res) => {
 };
 
 // Aktualizowanie produktu
-exports.updateProduct = async (req, res) => {
-    const { productId } = req.params;
-    const { name, price, description, quantity } = req.body;
-
-    try {
-        const product = await Product.findByPk(productId);
-
-        if (!product) {
-            return res.status(404).json({ message: 'Product not found' });
+exports.updateProduct = (req, res) => {
+    upload(req, res, async (err) => {
+        if (err) {
+            return res.status(400).json({ message: 'Error uploading image', error: err.message });
         }
 
-        await product.update({
-            name: name || product.name,
-            price: price || product.price,
-            description: description || product.description,
-            quantity: quantity || product.quantity,
-        });
+        const { productId } = req.params;
+        const { name, price, description, quantity } = req.body;
 
-        return res.status(200).json({ message: 'Product updated successfully', product });
-    } catch (err) {
-        return res.status(500).json({ message: 'Server error', error: err.message });
-    }
+        try {
+            const product = await Product.findByPk(productId);
+
+            if (!product) {
+                return res.status(404).json({ message: 'Product not found' });
+            }
+
+            // Usuñ poprzedni obraz, jeœli nowy obraz zosta³ przes³any
+            if (req.file && product.image) {
+                fs.unlink(product.image, (err) => {
+                    if (err) {
+                        console.error('Error deleting old file:', err);
+                    }
+                });
+            }
+
+            await product.update({
+                name: name || product.name,
+                price: price || product.price,
+                description: description || product.description,
+                quantity: quantity || product.quantity,
+                image: req.file ? req.file.path : product.image,
+            });
+
+            return res.status(200).json({ message: 'Product updated successfully', product });
+        } catch (err) {
+            return res.status(500).json({ message: 'Server error', error: err.message });
+        }
+    });
 };
 
-// Usuwanie produktu
+
 exports.deleteProduct = async (req, res) => {
     const { productId } = req.params;
 
@@ -100,6 +117,15 @@ exports.deleteProduct = async (req, res) => {
 
         if (!product) {
             return res.status(404).json({ message: 'Product not found' });
+        }
+
+        // Usuñ obraz z folderu "uploads", jeœli istnieje
+        if (product.image) {
+            fs.unlink(product.image, (err) => {
+                if (err) {
+                    console.error('Error deleting file:', err);
+                }
+            });
         }
 
         await product.destroy();

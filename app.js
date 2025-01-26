@@ -42,6 +42,9 @@ app.delete('/api/cart', koszykController.removeProductFromCart);
 app.get('/api/cart/:userId', koszykController.getCart);
 
 app.post('/api/products', produktController.addProduct);
+app.delete('/api/products/:productId', produktController.deleteProduct);
+app.put('/api/products/:productId', produktController.updateProduct);
+
 
 // Middleware obs³uguj¹cy b³êdy
 app.use((err, req, res, next) => {

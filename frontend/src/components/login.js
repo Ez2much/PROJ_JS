@@ -1,5 +1,5 @@
 import React, { useState } from 'react';
-import { loginUser } from '../services/api';  // Zak³adam, ¿e masz odpowiedni plik API helper
+import { loginUser } from '../services/api'; // Zak³adam, ¿e masz odpowiedni plik API helper
 import './Login.css';
 
 const Login = ({ setIsLoggedIn, setIsLogin }) => {
@@ -17,7 +17,8 @@ const Login = ({ setIsLoggedIn, setIsLogin }) => {
         try {
             const response = await loginUser(email, password);
             setSuccessMessage('Zalogowano pomyœlnie!');
-            localStorage.setItem('token', response.token);
+            localStorage.setItem('token', response.token);  // Zapisujemy token
+            localStorage.setItem('isAdmin', response.isAdmin); // Zapisujemy informacjê o adminie
             setIsLoggedIn(true);
             setLoading(false);
         } catch (err) {
