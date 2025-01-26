@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { loginUser } from '../services/api'; // Zak³adam, ¿e masz odpowiedni plik API helper
 import './Login.css';
 
-const Login = ({ setIsLoggedIn, setIsLogin, setIsAdmin }) => {
+const Login = ({ setIsLoggedIn, setIsLogin, setIsAdmin, onClose, onCartFetched }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -21,8 +21,14 @@ const Login = ({ setIsLoggedIn, setIsLogin, setIsAdmin }) => {
             localStorage.setItem('isAdmin', response.isAdmin); // Zapisujemy informacjê o adminie
             setIsLoggedIn(true);
             setLoading(false);
+            localStorage.setItem('userId', response.userId);
+
             if (setIsAdmin) {
                 setIsAdmin(response.isAdmin);
+            }
+
+            if (onCartFetched) {
+                onCartFetched(response.userId);
             }
 
         } catch (err) {

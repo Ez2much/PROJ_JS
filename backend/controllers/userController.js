@@ -63,7 +63,8 @@ exports.login = async (req, res) => {
         return res.status(200).json({
             message: 'Logowanie zakoñczone sukcesem.',
             token,
-            isAdmin: user.isAdmin, // Zwróæ tak¿e flagê isAdmin w odpowiedzi
+            isAdmin: user.isAdmin,
+            userId: user.id
         });
     } catch (err) {
         return res.status(500).json({ message: 'B³¹d serwera', error: err.message });

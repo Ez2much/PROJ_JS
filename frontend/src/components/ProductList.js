@@ -1,8 +1,8 @@
 import React, { useEffect, useState } from 'react';
-import { getProducts, deleteProduct, updateProduct } from '../services/api';
+import { getProducts, deleteProduct, updateProduct, addToCart, getCart } from '../services/api';
 import './ProductList.css';
 
-const ProductList = ({ products: initialProducts, refreshProducts }) => {
+const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }) => {
     const [products, setProducts] = useState(initialProducts);
     const [error, setError] = useState('');
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
@@ -11,6 +11,7 @@ const ProductList = ({ products: initialProducts, refreshProducts }) => {
     const [loading, setLoading] = useState(false);  // To manage loading state
 
     const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Single declaration of isAdmin
+    const userId = localStorage.getItem('userId');
 
     useEffect(() => {
         setProducts(initialProducts);  // Sync with initial products passed as prop
@@ -33,6 +34,19 @@ const ProductList = ({ products: initialProducts, refreshProducts }) => {
         fetchProducts();
     }, []);  // Fetch products only on component mount
 
+    const fetchCart = async (userId) => {
+        try {
+            const response = await getCart(userId);  // Replace with actual API call to fetch the user's cart
+            // Assume getCart is a function that fetches the cart for the given user
+            // Update the cart state or trigger a re-render
+            console.log('Cart fetched:', response);
+        } catch (err) {
+            setError('Error fetching cart');
+            console.error('Error fetching cart:', err);
+        }
+    };
+
+
     const handleDelete = async (productId) => {
         const token = localStorage.getItem('token');
         try {
@@ -43,6 +57,28 @@ const ProductList = ({ products: initialProducts, refreshProducts }) => {
             setError('Error deleting product');
         }
     };
+
+    const handleAddToCart = async (productId) => {
+        try {
+            const userId = localStorage.getItem('userId');
+            if (!userId) {
+                setError('Please log in to add items to the cart.');
+                return;
+            }
+
+            const response = await addToCart(userId, productId, 1); // Default to 1 quantity
+            if (response.message === 'Product added to cart') {
+                alert('Product added to cart successfully!');
+                fetchCart(userId); // Refresh the cart after adding the product
+            } else {
+                setError(response.message || 'Failed to add product to cart.');
+            }
+        } catch (err) {
+            console.error('Error adding product to cart:', err);
+            setError('Failed to add product to cart.');
+        }
+    };
+
 
     const openEditModal = (product) => {
         setCurrentProduct(product);
@@ -82,6 +118,8 @@ const ProductList = ({ products: initialProducts, refreshProducts }) => {
         return <p>{error}</p>;
     }
 
+
+
     return (
         <div>
             <h2>Products</h2>
@@ -96,6 +134,18 @@ const ProductList = ({ products: initialProducts, refreshProducts }) => {
                             <p>{product.description}</p>
                             <p>Price: ${product.price}</p>
                             <p>Quantity: {product.quantity}</p>
+
+                            {!isAdmin && (
+                                <button
+                                    onClick={() => onAddToCart(product.id)}
+                                    className="add-to-cart-button"
+                                    disabled={product.quantity === 0}
+                                >
+                                    {product.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+                                </button>
+                            )}
+
+
                             {isAdmin && (
                                 <div className="action-buttons">
                                     <button onClick={() => openEditModal(product)} className="edit-button">

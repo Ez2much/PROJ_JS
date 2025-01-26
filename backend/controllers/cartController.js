@@ -6,31 +6,49 @@ exports.addProductToCart = async (req, res) => {
     const { userId, productId, quantity } = req.body;
 
     try {
-        // Check if cart exists for this user
+        // Check product stock
+        const product = await Product.findByPk(productId);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found.' });
+        }
+        if (product.quantity < quantity) {
+            return res.status(400).json({ message: 'Not enough stock available.' });
+        }
+
         let cart = await Cart.findOne({ where: { userId } });
         if (!cart) {
             cart = await Cart.create({ userId });
         }
 
-        // Adding product to cart
-        const existingProduct = await ProductCart.findOne({
-            where: {
-                cartId: cart.id,
-                productId: productId,
-            },
+        const existingProductCart = await ProductCart.findOne({
+            where: { CartId: cart.id, ProductId: productId },
         });
 
-        if (existingProduct) {
-            await existingProduct.update({ quantity: existingProduct.quantity + quantity });
+        if (existingProductCart) {
+            const newQuantity = existingProductCart.quantity + quantity;
+            if (newQuantity > product.quantity) {
+                return res.status(400).json({ message: 'Exceeds available stock.' });
+            }
+            existingProductCart.quantity = newQuantity;
+            await existingProductCart.save();
         } else {
-            await ProductCart.create({ cartId: cart.id, productId, quantity });
+            if (quantity > product.quantity) {
+                return res.status(400).json({ message: 'Exceeds available stock.' });
+            }
+            await ProductCart.create({
+                CartId: cart.id,
+                ProductId: productId,
+                quantity,
+            });
         }
 
-        return res.status(200).json({ message: 'Product added to cart.' });
+        res.status(200).json({ message: 'Product added to cart successfully' });
     } catch (err) {
-        return res.status(500).json({ message: 'Server error', error: err.message });
+        console.error('Error adding product to cart:', err);
+        res.status(500).json({ message: 'Server error', error: err.message });
     }
 };
+
 
 // Removing product from cart
 exports.removeProductFromCart = async (req, res) => {
@@ -74,6 +92,51 @@ exports.getCart = async (req, res) => {
         }
 
         return res.status(200).json(cart);
+    } catch (err) {
+        return res.status(500).json({ message: 'Server error', error: err.message });
+    }
+};
+
+
+// Updating quantity of a product in the cart
+exports.updateProductQuantityInCart = async (req, res) => {
+    const { userId, productId, quantity } = req.body;
+
+    try {
+        const product = await Product.findByPk(productId);
+        if (!product) {
+            return res.status(404).json({ message: 'Product not found.' });
+        }
+
+        if (product.quantity < quantity) {
+            return res.status(400).json({ message: 'Not enough stock available.' });
+        }
+
+        const cart = await Cart.findOne({ where: { userId } });
+        if (!cart) {
+            return res.status(404).json({ message: 'Cart not found.' });
+        }
+
+        const productInCart = await ProductCart.findOne({
+            where: { CartId: cart.id, ProductId: productId },
+        });
+
+        if (!productInCart) {
+            return res.status(404).json({ message: 'Product not in cart.' });
+        }
+
+        if (quantity <= 0) {
+            // If the quantity is zero or less, remove the product
+            await ProductCart.destroy({
+                where: { CartId: cart.id, ProductId: productId },
+            });
+            return res.status(200).json({ message: 'Product removed from cart.' });
+        } else {
+            productInCart.quantity = quantity;
+            await productInCart.save();
+            return res.status(200).json({ message: 'Product quantity updated.' });
+        }
+
     } catch (err) {
         return res.status(500).json({ message: 'Server error', error: err.message });
     }
