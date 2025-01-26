@@ -1,9 +1,8 @@
 import React, { useState } from 'react';
 import { addProduct } from '../services/api'; // Zak³adaj¹c, ¿e masz odpowiedni¹ funkcjê do wysy³ania zapytañ API
-import axios from 'axios';
 import './AdminPanel.css';
 
-const AdminPanel = () => {
+const AdminPanel = ({ onProductAdded }) => { // Przekazujemy funkcjê do aktualizacji produktów
     const [name, setName] = useState('');
     const [price, setPrice] = useState('');
     const [description, setDescription] = useState('');
@@ -28,6 +27,10 @@ const AdminPanel = () => {
             // Wywo³anie funkcji z API do dodania produktu
             const response = await addProduct(newProduct, token);
             setMessage('Product added successfully');
+            // Zaktualizowanie listy produktów po dodaniu nowego produktu
+            if (onProductAdded) {
+                onProductAdded(); // Wywo³anie funkcji przekazanej jako prop
+            }
             // Clear form fields
             setName('');
             setPrice('');
@@ -92,4 +95,5 @@ const AdminPanel = () => {
         </div>
     );
 };
+
 export default AdminPanel;

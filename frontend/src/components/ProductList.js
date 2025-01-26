@@ -1,17 +1,20 @@
 import React, { useEffect, useState } from 'react';
-import { getProducts, deleteProduct, addProduct, updateProduct } from '../services/api';
+import { getProducts, deleteProduct, updateProduct } from '../services/api';
 import './ProductList.css';
-import AdminPanel from './AdminPanel';
 
-const ProductList = () => {
-    const [products, setProducts] = useState([]);
+const ProductList = ({ products: initialProducts, refreshProducts }) => {
+    const [products, setProducts] = useState(initialProducts);
     const [error, setError] = useState('');
-    const [loading, setLoading] = useState(false);
     const [isEditModalOpen, setIsEditModalOpen] = useState(false);
     const [currentProduct, setCurrentProduct] = useState(null);
     const [newImage, setNewImage] = useState(null);
+    const [loading, setLoading] = useState(false);  // To manage loading state
 
-    const isAdmin = localStorage.getItem('isAdmin') === 'true'; // SprawdŸ, czy u¿ytkownik jest administratorem
+    const isAdmin = localStorage.getItem('isAdmin') === 'true'; // Single declaration of isAdmin
+
+    useEffect(() => {
+        setProducts(initialProducts);  // Sync with initial products passed as prop
+    }, [initialProducts]);
 
     useEffect(() => {
         const fetchProducts = async () => {
@@ -28,13 +31,13 @@ const ProductList = () => {
         };
 
         fetchProducts();
-    }, []);
+    }, []);  // Fetch products only on component mount
 
     const handleDelete = async (productId) => {
         const token = localStorage.getItem('token');
         try {
-            await deleteProduct(productId, token); // Usuwanie produktu
-            setProducts(products.filter((product) => product.id !== productId)); // Aktualizacja stanu po usuniêciu
+            await deleteProduct(productId, token);  // Delete product
+            setProducts(products.filter((product) => product.id !== productId));  // Update state after deletion
         } catch (err) {
             console.error('Error deleting product:', err);
             setError('Error deleting product');
@@ -52,31 +55,24 @@ const ProductList = () => {
     };
 
     const handleImageChange = (event) => {
-        const file = event.target.files[0]; // Get the selected file
+        const file = event.target.files[0];
         if (file) {
-            setNewImage(file); // Update the state with the new image
+            setNewImage(file);  // Update the state with the selected image
         }
     };
 
     const handleEditSave = async () => {
         const token = localStorage.getItem('token');
         try {
-            // Update the product using the updated product and image
             const updatedProduct = await updateProduct(currentProduct, token, newImage);
-
-            // Fetch updated products to ensure data consistency
-            const data = await getProducts();  // Re-fetch products after the update
-            setProducts(data);  // Update state with the latest product data
-
-            closeEditModal(); // Close modal after success
+            const data = await getProducts();  // Re-fetch products after update
+            setProducts(data);  // Update state with the latest products
+            closeEditModal();  // Close the modal after successful save
         } catch (err) {
             console.error('Error updating product:', err);
             setError('Error updating product');
         }
     };
-
-
-
 
     if (loading) {
         return <p>Loading products...</p>;

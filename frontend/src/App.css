@@ -111,3 +111,9 @@
         transform: rotate(360deg);
     }
 }
+
+.admi-prod {
+    display: grid;
+    grid-template-columns: 25% 1fr;
+    gap: 1rem; 
+}
