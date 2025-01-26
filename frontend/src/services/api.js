@@ -139,6 +139,40 @@ export const removeFromCart = async (userId, productId) => {
     }
 };
 
+export const placeOrder = async (userId) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.post(`${API_URL}/api/order`,
+            { userId },
+            {
+                headers: {
+                    'Authorization': `Bearer ${token}`,
+                    'Content-Type': 'application/json'
+                }
+            }
+        );
+        return response.data;
+    } catch (error) {
+        console.error('Error placing order:', error);
+        throw error.response?.data?.message || 'Error placing order';
+    }
+};
+
+export const getUserOrders = async (userId) => {
+    try {
+        const token = localStorage.getItem('token');
+        const response = await axios.get(`${API_URL}/api/orders/${userId}`, {
+            headers: {
+                'Authorization': `Bearer ${token}`
+            }
+        });
+        return response.data;
+    } catch (error) {
+        console.error('Error fetching orders:', error);
+        throw error.response?.data?.message || 'Error fetching orders';
+    }
+};
+
 
 export const deleteProduct = async (productId, token) => {
     try {

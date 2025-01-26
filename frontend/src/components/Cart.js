@@ -1,8 +1,8 @@
 ﻿import React from 'react';
-import { removeFromCart, updateProductQuantity } from '../services/api';
+import { removeFromCart, updateProductQuantity,placeOrder } from '../services/api';
 import './Cart.css'; // Assuming you have this CSS file
 
-const Cart = ({ cartItems, onRefreshCart }) => {
+const Cart = ({ cartItems, onRefreshCart,fetchCart,fetchProducts }) => {
     const handleDecreaseQuantity = async (productId) => {
         const userId = localStorage.getItem('userId');
         if (!userId) {
@@ -30,34 +30,29 @@ const Cart = ({ cartItems, onRefreshCart }) => {
     };
 
     const handleIncreaseQuantity = async (productId) => {
-        // Znajdź przedmiot w koszyku po ID
         const item = cartItems.find((item) => item.id === productId);
 
-        // Upewnij się, że item oraz jego właściwości są dostępne
         if (!item || !item.ProductCart) {
             console.error('Item or ProductCart not found', item);
             return;
         }
 
-        // Sprawdzanie dostępności userId oraz quantity
         const userId = localStorage.getItem('userId');
         if (!userId) {
             console.error('User ID is not found in localStorage.');
             return;
         }
 
-        const newQuantity = item.ProductCart.quantity + 1; // Zwiększenie ilości o 1
+        const newQuantity = item.ProductCart.quantity + 1;
 
         try {
-            // Wywołanie API do aktualizacji ilości
-            await updateProductQuantity(userId, productId, newQuantity); // Zwiększ ilość
-            onRefreshCart(); // Odśwież koszyk po aktualizacji
+            await updateProductQuantity(userId, productId, newQuantity);
+            onRefreshCart();
         } catch (err) {
             console.error('Error updating product quantity in cart:', err);
             alert('Error updating product quantity');
         }
     };
-
 
     const handleDeleteItem = async (productId) => {
         const userId = localStorage.getItem('userId');
@@ -69,7 +64,7 @@ const Cart = ({ cartItems, onRefreshCart }) => {
         try {
             const response = await removeFromCart(userId, productId);
             if (response.message === 'Product removed from cart.') {
-                onRefreshCart(); // Refresh cart after deletion
+                onRefreshCart();
             } else {
                 alert(response.message || 'Failed to remove item.');
             }
@@ -79,11 +74,46 @@ const Cart = ({ cartItems, onRefreshCart }) => {
         }
     };
 
+    // Obliczanie całkowitej ceny produktów w koszyku
+    const calculateTotalCost = () => {
+        return cartItems.reduce((total, item) => {
+            return total + item.price * item.ProductCart.quantity;
+        }, 0);
+    };
+
+    const totalCost = calculateTotalCost();
+
+
+
+    const handlePlaceOrder = async () => {
+        const userId = localStorage.getItem('userId');
+        if (!userId) {
+            alert('Please log in to place an order.');
+            return;
+        }
+
+        try {
+            const response = await placeOrder(userId);
+            if (response.message === 'Order placed successfully') {
+                alert('Zamowienie zlozone!');
+
+                // Refresh cart and products
+                await fetchCart(userId);
+                await fetchProducts(); // Immediately update product list
+            }
+        } catch (err) {
+            console.error('Error placing order:', err);
+            alert(err.toString());
+        }
+    };
+
+    
+
     return (
         <div className="cart-container">
-            <h2 className="cart-title">Your Cart</h2>
+            <h2 className="cart-title">Koszyk</h2>
             {cartItems.length === 0 ? (
-                <p className="empty-message">Your cart is empty</p>
+                <p className="empty-message">Twój koszyk jest pusty</p>
             ) : (
                 <div>
                     {cartItems.map((item) => (
@@ -96,7 +126,7 @@ const Cart = ({ cartItems, onRefreshCart }) => {
                                 />
                                 <div className="item-details">
                                     <span className="item-name">{item.name}</span>
-                                    <span className="item-price">${item.price}</span>
+                                    <span className="item-price">{item.price} PLN</span>
                                 </div>
                             </div>
                             <div className="quantity-container">
@@ -109,7 +139,7 @@ const Cart = ({ cartItems, onRefreshCart }) => {
                                     </button>
                                 ) : (
                                     <button
-                                        className="quantity-button"
+                                        className="quantity-button-min"
                                         onClick={() => handleDecreaseQuantity(item.id)} // Decrease quantity
                                     >
                                         -
@@ -129,6 +159,18 @@ const Cart = ({ cartItems, onRefreshCart }) => {
                             </div>
                         </div>
                     ))}
+
+                    {/* Suma kosztów */}
+                    <div className="total-cost">
+                            <h3>Suma: {totalCost.toFixed(2)} PLN</h3>
+                            <button
+                                onClick={handlePlaceOrder}
+                                disabled={cartItems.length === 0}
+                                className="place-order-button"
+                            >
+                                Zloz zamowienie
+                            </button>
+                    </div>
                 </div>
             )}
         </div>

@@ -32,7 +32,7 @@ const Login = ({ setIsLoggedIn, setIsLogin, setIsAdmin, onClose, onCartFetched }
             }
 
         } catch (err) {
-            setError(err || 'Nie uda³o siê zalogowaæ.');
+            setError(err || 'Nie uda³o sie zalogowac.');
             setLoading(false);
         }
     };
@@ -49,19 +49,19 @@ const Login = ({ setIsLoggedIn, setIsLogin, setIsAdmin, onClose, onCartFetched }
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Wpisz swój e-mail"
+                            placeholder="Wpisz swoj e-mail"
                             className="form-input"
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="password" className="form-label">Has³o</label>
+                        <label htmlFor="password" className="form-label">Haslo</label>
                         <input
                             id="password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Wpisz swoje has³o"
+                            placeholder="Wpisz swoje haslo"
                             className="form-input"
                             required
                         />
@@ -72,7 +72,7 @@ const Login = ({ setIsLoggedIn, setIsLogin, setIsAdmin, onClose, onCartFetched }
                         className="submit-button"
                         disabled={loading}
                     >
-                        {loading ? 'Logowanie...' : 'Zaloguj siê'}
+                        {loading ? 'Logowanie...' : 'Zaloguj sie'}
                     </button>
                 </form>
 
@@ -88,9 +88,9 @@ const Login = ({ setIsLoggedIn, setIsLogin, setIsAdmin, onClose, onCartFetched }
                     Nie masz konta?
                     <button
                         onClick={() => setIsLogin(false)}
-                        className="text-blue-600"
+                        className="masz-button"
                     >
-                        Zarejestruj siê
+                        Zarejestruj sie
                     </button>
                 </p>
             </div>

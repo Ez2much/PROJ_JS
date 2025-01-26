@@ -6,6 +6,7 @@ import Header from './components/header';
 import AdminPanel from './components/AdminPanel';
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
+import OrderList from './components/OrderList';
 import './App.css';
 
 const App = () => {
@@ -17,6 +18,8 @@ const App = () => {
     const [isAdmin, setIsAdmin] = useState(false);
 
     const [cartItems, setCartItems] = useState([]);
+
+    const [currentView, setCurrentView] = useState('products');
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -72,11 +75,17 @@ const App = () => {
         }
     };
 
+    const handleOrdersClick = () => {
+        setCurrentView('orders');
+    };
+
     const handleLogout = () => {
         localStorage.removeItem('token');
         localStorage.removeItem('isAdmin');
+        localStorage.removeItem('userId');
         setIsLoggedIn(false);
         setIsAdmin(false);
+        setCurrentView('products');
     };
 
     const toggleLoginForm = () => {
@@ -90,6 +99,11 @@ const App = () => {
     };
 
     const closeAuthForm = () => {
+        setShowAuthForm(false);
+    };
+
+    const handleBackToProductsClick = () => {
+        setCurrentView('products'); // Switch back to products and cart
         setShowAuthForm(false);
     };
 
@@ -108,6 +122,8 @@ const App = () => {
                 handleLogout={handleLogout}
                 onLoginClick={toggleLoginForm}
                 onRegisterClick={toggleRegisterForm}
+                onOrdersClick={handleOrdersClick}
+                onBackToProductsClick={handleBackToProductsClick}
             />
             {showAuthForm && !isLoggedIn ? (
                 <div>
@@ -118,11 +134,13 @@ const App = () => {
                             setIsAdmin={setIsAdmin}
                             onClose={closeAuthForm}
                             onCartFetched={fetchCart}
+                            onBackToProductsClick={handleBackToProductsClick}
                         />
                     ) : (
                         <Register
                             setIsLogin={setIsLogin}
-                            onClose={closeAuthForm}
+                                onClose={closeAuthForm}
+                                onBackToProductsClick={handleBackToProductsClick}
                         />
                     )}
                 </div>
@@ -132,24 +150,55 @@ const App = () => {
                             {isAdmin && (
                                 <AdminPanel onProductAdded={fetchProducts} />
                             )}
-                            {!isAdmin && (
+                            {currentView === 'products' && !isAdmin && (
                                 <Cart
                                     cartItems={cartItems}
                                     onRefreshCart={() => fetchCart(localStorage.getItem('userId'))}
+                                    onRefreshProducts={fetchProducts}
+                                    fetchCart={fetchCart}
+                                    fetchProducts={fetchProducts}
+                                    onOrdersClick={handleOrdersClick}
                                 />
                             )}
-                            <div className="flex-grow">
-                                <ProductList
-                                    products={products}
-                                    refreshProducts={fetchProducts}
-                                    isAdmin={isAdmin}
-                                    onAddToCart={handleAddToCart}
-                                />
-                            </div>
+                            {currentView === 'products' && (
+                                <div className="flex-grow">
+                                    <ProductList
+                                        products={products}
+                                        refreshProducts={fetchProducts}
+                                        isAdmin={isAdmin}
+                                        onAddToCart={handleAddToCart}
+                                    />
+                                </div>
+                            )}
+
+                           
+
+                            {currentView === 'orders' && (
+                                <div>
+                                    {/*<button onClick={handleBackToProductsClick}>
+                                        Powrót do produktów i koszyka
+                                    </button>*/}
+                                    <OrderList />
+                                    
+                                </div>
+                            )}
                             
                         </div>
                 ) : (
-                    <ProductList products={products} />
+                            <div>
+                                {/* Baner na samej górze */}
+                                <div className="main-image-container">
+                                    <img
+                                        src="http://localhost:5000/public/banner.webp"
+                                        alt="Main banner"
+                                        className="main-image"
+                                    />
+                                </div>
+
+                                <ProductList products={products} />
+                            </div>
+
+
                 )
             )}
         </div>

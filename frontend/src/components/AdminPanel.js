@@ -45,11 +45,11 @@ const AdminPanel = ({ onProductAdded }) => { // Przekazujemy funkcjê do aktualiz
 
     return (
         <div className="admin-panel">
-            <h2>Admin Panel - Add New Product</h2>
+            <h2>Dodaj nowy produkt</h2>
             {message && <p className={message.includes('Error') ? 'error' : ''}>{message}</p>}
             <form onSubmit={handleSubmit}>
                 <div>
-                    <label>Product Name</label>
+                    <label>Nazwa</label>
                     <input
                         type="text"
                         value={name}
@@ -58,7 +58,7 @@ const AdminPanel = ({ onProductAdded }) => { // Przekazujemy funkcjê do aktualiz
                     />
                 </div>
                 <div>
-                    <label>Price</label>
+                    <label>Cena</label>
                     <input
                         type="number"
                         value={price}
@@ -67,14 +67,14 @@ const AdminPanel = ({ onProductAdded }) => { // Przekazujemy funkcjê do aktualiz
                     />
                 </div>
                 <div>
-                    <label>Description</label>
+                    <label>Opis</label>
                     <textarea
                         value={description}
                         onChange={(e) => setDescription(e.target.value)}
                     />
                 </div>
                 <div>
-                    <label>Quantity</label>
+                    <label>Ilosc</label>
                     <input
                         type="number"
                         value={quantity}
@@ -84,13 +84,13 @@ const AdminPanel = ({ onProductAdded }) => { // Przekazujemy funkcjê do aktualiz
                     />
                 </div>
                 <div>
-                    <label>Image</label>
+                    <label>Zdjecie</label>
                     <input
                         type="file"
                         onChange={handleImageChange}
                     />
                 </div>
-                <button type="submit">Add Product</button>
+                <button type="submit">Dodaj produkt</button>
             </form>
         </div>
     );

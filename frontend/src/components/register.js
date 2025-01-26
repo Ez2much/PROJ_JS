@@ -39,13 +39,13 @@ const Register = ({ setIsLogin }) => {  // Odbieramy setIsLogin jako props
                 <h2 className="login-title">Rejestracja</h2>
                 <form onSubmit={handleRegister} className="form">
                     <div className="form-group">
-                        <label htmlFor="username" className="form-label">Nazwa u¿ytkownika</label>
+                        <label htmlFor="username" className="form-label">Nazwa uzytkownika</label>
                         <input
                             id="username"
                             type="text"
                             value={username}
                             onChange={(e) => setUsername(e.target.value)}
-                            placeholder="Wpisz swoj¹ nazwê u¿ytkownika"
+                            placeholder="Wpisz swoja nazwe uzytkownika"
                             className="form-input"
                             required
                         />
@@ -57,31 +57,31 @@ const Register = ({ setIsLogin }) => {  // Odbieramy setIsLogin jako props
                             type="email"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            placeholder="Wpisz swój e-mail"
+                            placeholder="Wpisz swoj e-mail"
                             className="form-input"
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="password" className="form-label">Has³o</label>
+                        <label htmlFor="password" className="form-label">Haslo</label>
                         <input
                             id="password"
                             type="password"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            placeholder="Wpisz swoje has³o"
+                            placeholder="Wpisz swoje haslo"
                             className="form-input"
                             required
                         />
                     </div>
                     <div className="form-group">
-                        <label htmlFor="confirmPassword" className="form-label">PotwierdŸ has³o</label>
+                        <label htmlFor="confirmPassword" className="form-label">Potwierdz haslo</label>
                         <input
                             id="confirmPassword"
                             type="password"
                             value={confirmPassword}
                             onChange={(e) => setConfirmPassword(e.target.value)}
-                            placeholder="PotwierdŸ has³o"
+                            placeholder="Potwierdz haslo"
                             className="form-input"
                             required
                         />
@@ -103,12 +103,12 @@ const Register = ({ setIsLogin }) => {  // Odbieramy setIsLogin jako props
 
                 {/* Dodajemy przycisk prze³¹czaj¹cy do formularza logowania */}
                 <p className="text-center mt-4">
-                    Masz ju¿ konto?
+                    Masz juz konto?
                     <button
                         onClick={() => setIsLogin(true)}  // Ustawiamy isLogin na true, ¿eby pokazaæ formularz logowania
-                        className="text-blue-600"
+                        className="masz-button"
                     >
-                        Zaloguj siê
+                        Zaloguj sie
                     </button>
                 </p>
             </div>

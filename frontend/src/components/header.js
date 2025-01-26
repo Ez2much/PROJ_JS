@@ -1,7 +1,8 @@
 import React from 'react';
 import './Header.css';
 
-const Header = ({ isLoggedIn, handleLogout, onLoginClick, onRegisterClick }) => {
+const Header = ({ isLoggedIn, handleLogout, onLoginClick, onRegisterClick, onOrdersClick, onBackToProductsClick }) => {
+    const isAdmin = localStorage.getItem('isAdmin') === 'true';
     return (
         <header className="header">
             <div className="header-content">
@@ -10,23 +11,37 @@ const Header = ({ isLoggedIn, handleLogout, onLoginClick, onRegisterClick }) => 
                         src="logo.png"
                         alt="Logo"
                         className="logo"
+                        onClick={onBackToProductsClick} // Add click handler to logo
+                        style={{ cursor: 'pointer' }} // Optional: Make logo look clickable
                     />
                 </div>
+                <div className="buttonyy">
+                    {isLoggedIn && !isAdmin && (
+                    <>
+                        <button
+                            className="orders-button"
+                            onClick={onOrdersClick}
+                        >
+                            Moje zamowienia
+                        </button>
+                    </>
+                )}
                 <div className="auth-buttons">
                     {isLoggedIn ? (
                         <button className="logout-button" onClick={handleLogout}>
-                            Wyloguj siê
+                            Wyloguj sie
                         </button>
                     ) : (
                         <>
                             <button className="login-button" onClick={onLoginClick}>
-                                Zaloguj siê
+                                Zaloguj sie
                             </button>
                             <button className="register-button" onClick={onRegisterClick}>
-                                Zarejestruj siê
+                                Zarejestruj sie
                             </button>
                         </>
                     )}
+                    </div>
                 </div>
             </div>
         </header>

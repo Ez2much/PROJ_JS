@@ -14,7 +14,7 @@ exports.register = async (req, res) => {
         });
 
         if (existingUser) {
-            return res.status(400).json({ message: 'Email ju¿ istnieje.' });
+            return res.status(400).json({ message: 'Email juz istnieje.' });
         }
 
         // Hashowanie has³a przed zapisaniem w bazie
@@ -27,9 +27,9 @@ exports.register = async (req, res) => {
             username, // Dodajemy username do nowego u¿ytkownika
         });
 
-        return res.status(201).json({ message: 'Rejestracja zakoñczona sukcesem', user: newUser });
+        return res.status(201).json({ message: 'Rejestracja zakonczona sukcesem', user: newUser });
     } catch (err) {
-        return res.status(500).json({ message: 'B³¹d serwera', error: err.message });
+        return res.status(500).json({ message: 'Bladd serwera', error: err.message });
     }
 };
 
@@ -43,14 +43,14 @@ exports.login = async (req, res) => {
         const user = await User.findOne({ where: { email } });
 
         if (!user) {
-            return res.status(404).json({ message: 'U¿ytkownik nie znaleziony.' });
+            return res.status(404).json({ message: 'Uzytkownik nie znaleziony.' });
         }
 
         // Sprawdzenie poprawnoœci has³a
         const validPassword = await bcrypt.compare(password, user.password);
 
         if (!validPassword) {
-            return res.status(400).json({ message: 'Niepoprawne has³o.' });
+            return res.status(400).json({ message: 'Niepoprawne haslo.' });
         }
 
         // Generowanie tokenu JWT
@@ -67,7 +67,7 @@ exports.login = async (req, res) => {
             userId: user.id
         });
     } catch (err) {
-        return res.status(500).json({ message: 'B³¹d serwera', error: err.message });
+        return res.status(500).json({ message: 'Blad serwera', error: err.message });
     }
 };
 

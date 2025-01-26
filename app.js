@@ -32,6 +32,11 @@ app.use(express.static(path.join(__dirname, 'frontend')));
 sequelize.sync().then(() => {
     console.log('Baza danych jest zsynchronizowana.');
 });
+const orderController = require('./backend/controllers/orderController');
+
+app.post('/api/order', orderController.createOrder);
+app.get('/api/orders/:userId', orderController.getUserOrders);
+
 
 // Trasy aplikacji
 app.post('/api/register', uzytkownikController.register);
@@ -46,6 +51,7 @@ app.delete('/api/products/:productId', produktController.deleteProduct);
 app.put('/api/products/:productId', produktController.updateProduct);
 
 app.put('/api/cart/update', koszykController.updateProductQuantityInCart);
+app.post('/api/order', koszykController.placeOrder);
 
 
 

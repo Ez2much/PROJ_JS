@@ -111,7 +111,7 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
     };
 
     if (loading) {
-        return <p>Loading products...</p>;
+        return <p>Ladowanie produktow...</p>;
     }
 
     if (error) {
@@ -122,9 +122,9 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
 
     return (
         <div>
-            <h2>Products</h2>
+            <h2>Produkty</h2>
             {products.length === 0 ? (
-                <p>No products available.</p>
+                <p>Brak dostepnych produktow.</p>
             ) : (
                 <div className="products-list">
                     {products.map((product) => (
@@ -132,16 +132,16 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
                             <img src={`http://localhost:5000/${product.image}`} alt={product.name} />
                             <h3>{product.name}</h3>
                             <p>{product.description}</p>
-                            <p>Price: ${product.price}</p>
-                            <p>Quantity: {product.quantity}</p>
+                            <p><b>Cena:</b> {product.price} PLN</p>
+                            <p><b>Ilosc na stanie:</b> {product.quantity}</p>
 
-                            {!isAdmin && (
+                            {userId && userId !== '' && !isAdmin && (
                                 <button
                                     onClick={() => onAddToCart(product.id)}
                                     className="add-to-cart-button"
                                     disabled={product.quantity === 0}
                                 >
-                                    {product.quantity === 0 ? 'Out of Stock' : 'Add to Cart'}
+                                    {product.quantity === 0 ? 'Brak na magazynie' : 'Dodaj do koszyka'}
                                 </button>
                             )}
 
@@ -149,10 +149,10 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
                             {isAdmin && (
                                 <div className="action-buttons">
                                     <button onClick={() => openEditModal(product)} className="edit-button">
-                                        Edit
+                                        Edytuj
                                     </button>
-                                    <button onClick={() => handleDelete(product.id)} className="delete-button">
-                                        Delete
+                                    <button onClick={() => handleDelete(product.id)} className="deletee-button">
+                                        Usun
                                     </button>
                                 </div>
                             )}
@@ -164,9 +164,9 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
             {isEditModalOpen && (
                 <div className="modal-overlay">
                     <div className="modal">
-                        <h3>Edit Product</h3>
+                        <h3>Edytuj produkt</h3>
                         <label>
-                            Name:
+                            Nazwa:
                             <input
                                 type="text"
                                 value={currentProduct.name}
@@ -176,7 +176,7 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
                             />
                         </label>
                         <label>
-                            Price:
+                            Cena:
                             <input
                                 type="number"
                                 value={currentProduct.price}
@@ -186,7 +186,7 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
                             />
                         </label>
                         <label>
-                            Description:
+                            Opis:
                             <textarea
                                 value={currentProduct.description}
                                 onChange={(e) =>
@@ -195,7 +195,7 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
                             />
                         </label>
                         <label>
-                            Quantity:
+                            Ilosc:
                             <input
                                 type="number"
                                 value={currentProduct.quantity}
@@ -205,15 +205,15 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
                             />
                         </label>
                         <label>
-                            Image:
+                            Zdjecie:
                             <input type="file" accept="image/*" onChange={handleImageChange} />
                         </label>
                         <div className="modal-buttons">
                             <button onClick={handleEditSave} className="save-button">
-                                Save
+                                Zapisz
                             </button>
                             <button onClick={closeEditModal} className="cancel-button">
-                                Cancel
+                                Anuluj
                             </button>
                         </div>
                     </div>

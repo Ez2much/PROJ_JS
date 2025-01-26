@@ -4,8 +4,11 @@
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
-    margin:20px 20px 0px 20px;
+    font-family: Montserrat;
+    margin: 20px 20px 0px 20px;
+    position: sticky;
+    top: 20px; /* Adjust this value as needed to set the distance from the top */
+    max-height: calc(100vh - 60px); /* Adjust based on your header size */
 }
 
 .cart-title {
@@ -68,6 +71,20 @@
     margin-left: auto; /* Push to the right side */
 }
 
+
+.place-order-button {
+    padding: 8px 16px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+}
+
+    .place-order-button:hover {
+        background-color: #0056b3;
+    }
+
 .quantity-button {
     background-color: #4CAF50;
     color: white;
@@ -79,10 +96,20 @@
     margin: 0 5px;
 }
 
-    .quantity-button:disabled {
-        background-color: #ddd;
-        cursor: not-allowed;
-    }
+.quantity-button-min {
+    background-color: #4CAF50;
+    color: white;
+    border: none;
+    padding: 6px 12px;
+    font-size: 1rem;
+    cursor: pointer;
+    border-radius: 4px;
+}
+
+.quantity-button:disabled {
+    background-color: #ddd;
+    cursor: not-allowed;
+}
 
 .item-quantity {
     font-size: 1.1rem;

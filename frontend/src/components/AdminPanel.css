@@ -1,10 +1,14 @@
 .admin-panel {
     max-width: 600px;
-    padding: 20px;
+    padding: 20px 40px 20px 20px;
     background-color: #f9f9f9;
     border-radius: 10px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-    font-family: Arial, sans-serif;
+    font-family: Montserrat;
+    position: sticky;
+    top: 20px; /* Adjust this value as needed to set the distance from the top */
+    max-height: calc(100vh - 60px);
+    margin: 20px 20px 0px 20px;
 }
 
 
@@ -37,6 +41,7 @@
         border: 1px solid #ccc;
         border-radius: 5px;
         font-size: 14px;
+        margin-right: 20px;
     }
 
         .admin-panel input:focus,
@@ -67,3 +72,4 @@
         .admin-panel p.error {
             color: #ff0000;
         }
+
