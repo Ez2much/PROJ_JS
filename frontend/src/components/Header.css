@@ -32,3 +32,22 @@
     .logout-button:hover {
         background-color: #c82333;
     }
+
+
+.header-content {
+    display: flex;
+    justify-content: space-between; /* This ensures that the content is spaced out */
+    align-items: center; /* Vertically aligns the content */
+    padding: 1rem; /* Optional: Adds padding around the content */
+    width:100%;
+}
+
+.logo-container {
+    display: flex;
+    align-items: center; /* Centers the logo vertically */
+}
+
+.auth-buttons {
+    display: flex;
+    justify-content: flex-end; /* Aligns the buttons to the right */
+}

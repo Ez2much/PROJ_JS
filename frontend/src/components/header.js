@@ -1,29 +1,28 @@
-import React, { useEffect, useState } from 'react';
+import React from 'react';
 import './Header.css';
 
-const Header = ({ isLoggedIn, setIsLogin, handleLogout }) => {
-    const [currentStatus, setCurrentStatus] = useState(isLoggedIn);
-
-    // Sprawdzamy stan zalogowania przy ka¿dym renderze
-    useEffect(() => {
-        setCurrentStatus(isLoggedIn);
-    }, [isLoggedIn]);
-
+const Header = ({ isLoggedIn, handleLogout, onLoginClick, onRegisterClick }) => {
     return (
         <header className="header">
             <div className="header-content">
-                <h1 className="header-title">Moja aplikacja</h1>
+                <div className="logo-container">
+                    <img
+                        src="logo.png"
+                        alt="Logo"
+                        className="logo"
+                    />
+                </div>
                 <div className="auth-buttons">
-                    {currentStatus ? (
+                    {isLoggedIn ? (
                         <button className="logout-button" onClick={handleLogout}>
                             Wyloguj siê
                         </button>
                     ) : (
                         <>
-                            <button className="login-button" onClick={() => setIsLogin(true)}>
+                            <button className="login-button" onClick={onLoginClick}>
                                 Zaloguj siê
                             </button>
-                            <button className="register-button" onClick={() => setIsLogin(false)}>
+                            <button className="register-button" onClick={onRegisterClick}>
                                 Zarejestruj siê
                             </button>
                         </>

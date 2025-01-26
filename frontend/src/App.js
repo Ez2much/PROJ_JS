@@ -12,6 +12,7 @@ const App = () => {
     const [isLoggedIn, setIsLoggedIn] = useState(false);
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState([]);
+    const [showAuthForm, setShowAuthForm] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
@@ -36,6 +37,20 @@ const App = () => {
         setIsLoggedIn(false);
     };
 
+    const toggleLoginForm = () => {
+        setIsLogin(true);
+        setShowAuthForm(true);
+    };
+
+    const toggleRegisterForm = () => {
+        setIsLogin(false);
+        setShowAuthForm(true);
+    };
+
+    const closeAuthForm = () => {
+        setShowAuthForm(false);
+    };
+
     if (loading) {
         return (
             <div className="flex justify-center items-center min-h-screen">
@@ -46,22 +61,37 @@ const App = () => {
 
     return (
         <div className="container">
-            <Header isLoggedIn={isLoggedIn} setIsLogin={setIsLogin} handleLogout={handleLogout} />
-            {isLoggedIn ? (
-                <div className="admi-prod">
-                    <AdminPanel onProductAdded={fetchProducts} />
-                    <ProductList products={products} refreshProducts={fetchProducts} />
-                </div>
-            ) : (
+            <Header
+                isLoggedIn={isLoggedIn}
+                handleLogout={handleLogout}
+                onLoginClick={toggleLoginForm}
+                onRegisterClick={toggleRegisterForm}
+            />
+            {showAuthForm && !isLoggedIn ? (
                 <div>
                     {isLogin ? (
-                        <Login setIsLoggedIn={setIsLoggedIn} setIsLogin={setIsLogin} />
+                        <Login
+                            setIsLoggedIn={setIsLoggedIn}
+                            setIsLogin={setIsLogin}
+                            onClose={closeAuthForm}
+                        />
                     ) : (
-                        <Register setIsLogin={setIsLogin} />
+                        <Register
+                            setIsLogin={setIsLogin}
+                            onClose={closeAuthForm}
+                        />
                     )}
                 </div>
+            ) : (
+                isLoggedIn ? (
+                    <div className="admi-prod">
+                        <AdminPanel onProductAdded={fetchProducts} />
+                        <ProductList products={products} refreshProducts={fetchProducts} />
+                    </div>
+                ) : (
+                    <ProductList products={products} />
+                )
             )}
-            
         </div>
     );
 };
