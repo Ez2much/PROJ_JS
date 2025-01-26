@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { loginUser } from '../services/api'; // Zak³adam, ¿e masz odpowiedni plik API helper
 import './Login.css';
 
-const Login = ({ setIsLoggedIn, setIsLogin }) => {
+const Login = ({ setIsLoggedIn, setIsLogin, setIsAdmin }) => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const [error, setError] = useState('');
@@ -21,6 +21,10 @@ const Login = ({ setIsLoggedIn, setIsLogin }) => {
             localStorage.setItem('isAdmin', response.isAdmin); // Zapisujemy informacjê o adminie
             setIsLoggedIn(true);
             setLoading(false);
+            if (setIsAdmin) {
+                setIsAdmin(response.isAdmin);
+            }
+
         } catch (err) {
             setError(err || 'Nie uda³o siê zalogowaæ.');
             setLoading(false);

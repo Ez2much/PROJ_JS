@@ -13,11 +13,14 @@ const App = () => {
     const [loading, setLoading] = useState(true);
     const [products, setProducts] = useState([]);
     const [showAuthForm, setShowAuthForm] = useState(false);
+    const [isAdmin, setIsAdmin] = useState(false);
 
     useEffect(() => {
         const token = localStorage.getItem('token');
+        const adminStatus = localStorage.getItem('isAdmin') === 'true';
         if (token) {
             setIsLoggedIn(true);
+            setIsAdmin(adminStatus);
         }
         fetchProducts();
         setLoading(false);
@@ -34,7 +37,9 @@ const App = () => {
 
     const handleLogout = () => {
         localStorage.removeItem('token');
+        localStorage.removeItem('isAdmin');
         setIsLoggedIn(false);
+        setIsAdmin(false);
     };
 
     const toggleLoginForm = () => {
@@ -73,6 +78,7 @@ const App = () => {
                         <Login
                             setIsLoggedIn={setIsLoggedIn}
                             setIsLogin={setIsLogin}
+                            setIsAdmin={setIsAdmin}
                             onClose={closeAuthForm}
                         />
                     ) : (
@@ -84,10 +90,16 @@ const App = () => {
                 </div>
             ) : (
                 isLoggedIn ? (
-                    <div className="admi-prod">
-                        <AdminPanel onProductAdded={fetchProducts} />
-                        <ProductList products={products} refreshProducts={fetchProducts} />
-                    </div>
+                        <div className="admi-prod">
+                            {isAdmin && (
+                                <AdminPanel onProductAdded={fetchProducts} />
+                            )}
+                            <ProductList
+                                products={products}
+                                refreshProducts={fetchProducts}
+                                isAdmin={isAdmin}
+                            />
+                        </div>
                 ) : (
                     <ProductList products={products} />
                 )
