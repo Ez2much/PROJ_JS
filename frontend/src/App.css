@@ -120,6 +120,7 @@
     grid-template-columns: 25% 1fr;
     gap: 1rem; 
     position:relative;
+    min-height:78vh;
 }
 
 .main-image{width:100%;}

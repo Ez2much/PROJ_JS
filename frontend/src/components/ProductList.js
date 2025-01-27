@@ -122,7 +122,7 @@ const ProductList = ({ products: initialProducts, refreshProducts, onAddToCart }
 
     return (
         <div>
-            <h2>Produkty</h2>
+            <h2 className="prod-tit-gl">Produkty</h2>
             {products.length === 0 ? (
                 <p>Brak dostepnych produktow.</p>
             ) : (
