@@ -1,10 +1,13 @@
 .orders-container {
-  position: absolute;
-  left: 50%; /* Przesuwa kontener na 50% szerokoœci ekranu */
-  transform: translate(-50%, 0%); /* Dokonuje przesuniêcia o 50% jego szerokoœci i wysokoœci, aby idealnie wyœrodkowaæ */
-  width: 700px; /* Mo¿esz dostosowaæ szerokoœæ, jeœli chcesz */
-  height: auto; /* Mo¿esz dostosowaæ wysokoœæ, jeœli chcesz */
-  margin-top:20px;
+    position: absolute;
+    left: 50%; /* Przesuwa kontener na 50% szerokoœci ekranu */
+    transform: translate(-50%, 0%); /* Dokonuje przesuniêcia o 50% jego szerokoœci i wysokoœci, aby idealnie wyœrodkowaæ */
+    width: 1200px; /* Mo¿esz dostosowaæ szerokoœæ, jeœli chcesz */
+    height: auto; /* Mo¿esz dostosowaæ wysokoœæ, jeœli chcesz */
+    margin-top: 20px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 2 kolumny o równej szerokoœci */
+    gap: 20px;
 }
 
 

@@ -7,6 +7,7 @@ import AdminPanel from './components/AdminPanel';
 import ProductList from './components/ProductList';
 import Cart from './components/Cart';
 import OrderList from './components/OrderList';
+import Footer from './components/Footer';
 import './App.css';
 
 const App = () => {
@@ -169,6 +170,7 @@ const App = () => {
                                         onAddToCart={handleAddToCart}
                                     />
                                 </div>
+
                             )}
 
                            
@@ -201,6 +203,7 @@ const App = () => {
 
                 )
             )}
+            <Footer />
         </div>
     );
 };
