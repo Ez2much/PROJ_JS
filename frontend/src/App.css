@@ -119,6 +119,7 @@
     display: grid;
     grid-template-columns: 25% 1fr;
     gap: 1rem; 
+    position:relative;
 }
 
 .main-image{width:100%;}
